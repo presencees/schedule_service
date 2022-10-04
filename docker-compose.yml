@@ -1,33 +1,45 @@
-version: '3'
+version: "3"
 services:
-  rest:
+  schedule:
     build:
       context: .
-    image: 'fikridulumina/base-nodejs:dev-1.0.0'
-    container_name: rest_auth
+    image: "fikridulumina/schedule-services:dev-1.0.0"
+    container_name: app_schedule
     ports:
-      - '${APP_PORT}:${APP_PORT}'
+      - "${APP_PORT}:${APP_PORT}"
     volumes:
-      - './:/opt/app'
+      - "./:/opt/app"
     depends_on:
-      - dbMysql
+      - dbSchedule
     networks:
-      - auth
-
-  dbMysql:
-    image: 'mysql:5.7'
-    container_name: db_auth
+      - schedule
+  dbSchedule:
+    image: "mysql:5.7"
+    container_name: db_schedule
     restart: always
     environment:
-      MYSQL_DATABASE: '${DB_NAME}'
-      MYSQL_USER: '${DB_USER}'
-      MYSQL_PASSWORD: '${DB_PASS}'
-      MYSQL_ROOT_PASSWORD: '${DB_ROOT_PASS}'
+      MYSQL_DATABASE: "${DB_NAME}"
+      MYSQL_USER: "${DB_USER}"
+      MYSQL_PASSWORD: "${DB_PASS}"
+      MYSQL_ROOT_PASSWORD: "${DB_ROOT_PASS}"
     ports:
-      - '${DB_PORT}'
+      - "${DB_PORT}"
     volumes:
-      - './my-db:/var/lib/mysql'
+      - "./my-db:/var/lib/mysql"
     networks:
-      - auth
+      - schedule
+  dbSchedulePma:
+    depends_on:
+      - dbSchedule
+    image: phpmyadmin/phpmyadmin
+    container_name: dbSchedulePma
+    restart: always
+    ports:
+      - "3033:80"
+    environment:
+      PMA_HOST: dbSchedule
+    networks:
+      - schedule
+
 networks:
-  auth: null
+  schedule: null
