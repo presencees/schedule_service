@@ -1,80 +1,37 @@
 const express = require("express");
 const bodyParser = require("body-parser");
 const app = express();
-const mysql = require("mysql");
-const md5 = require("md5");
-const jwt = require("jsonwebtoken");
-const now = Date.now();
+// const mysql = require("mysql");
+// const md5 = require("md5");
 // import * as dotenv from 'dotenv';
 // dotenv.config()
 
 require("dotenv").config();
 // console.log(process.env)
+require("./app/routes/route.js")(app);
 
 const PORT = process.env.APP_PORT;
 // parse application/json
 app.use(bodyParser.json());
 
-const config = {
-  host: process.env.DB_HOST,
-  user: process.env.DB_USER,
-  password: process.env.DB_PASS,
-  database: process.env.DB_NAME,
-};
+// const config = {
+//   host: process.env.DB_HOST,
+//   user: process.env.DB_USER,
+//   password: process.env.DB_PASS,
+//   database: process.env.DB_NAME,
+// };
 //create database connection
-const conn = mysql.createConnection(config);
+// const conn = mysql.createConnection(config);
 // console.log(config);
 
 //connect to database
-conn.connect((err) => {
-  // if(err) throw err;
-  if (err) {
-    return console.error("error: " + err.message);
-  }
-  console.log("Mysql Connected...");
-});
-
-// router
-app.get("/", (req, res) => {
-  res.setHeader("content-type", "application/json");
-  res.send(
-    JSON.stringify({
-      status: 200,
-      error: null,
-      message: "schedule services is available",
-    })
-  );
-});
-
-// functions
-function verify(token) {
-  const payload = jwt.verify(token, process.env.JWT_SECRET_KEY);
-  if (payload.exp - now > 0) {
-    return {
-      status: true,
-      msg: "Tuken sudah sesuai",
-      data: payload,
-    };
-  } else {
-    return {
-      status: false,
-      msg: "token sudah tidak berlaku.",
-      data: [],
-    };
-  }
-}
-
-function createJwt(userId) {
-  let jwtSecretKey = process.env.JWT_SECRET_KEY;
-  let data = {
-    iat: now,
-    exp: now + 1000 * 60 * 60 * 24, // satu hari (24 jam)
-    // exp:now, // satu hari (24 jam)
-    userId,
-  };
-  const token = jwt.sign(data, jwtSecretKey);
-  return token;
-}
+// conn.connect((err) => {
+//   // if(err) throw err;
+//   if (err) {
+//     return console.error("error: " + err.message);
+//   }
+//   console.log("Mysql Connected...");
+// });
 
 //Server listening
 app.listen(PORT, () => {
