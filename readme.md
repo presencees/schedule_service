@@ -1,11 +1,8 @@
-# auth services
+# Schedule Service
 
 ## Features
 
-- login
-- token validation
-- renew access token
-- renew refresh token
+- Get schedule
 
 ## required
 
@@ -24,4 +21,9 @@ docker-compose up
 For production environments...
 ```sh
 docker-compose up -d
+```
+
+## Restore Database
+```bash
+bash restoreDB.sh
 ```

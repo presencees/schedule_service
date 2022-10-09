@@ -8,11 +8,16 @@ services:
     ports:
       - "${APP_PORT}:${APP_PORT}"
     volumes:
-      - "./:/opt/app"
+      - "./.env/:/opt/app/.env"
+      - "./index.js/:/opt/app/index.js"
+      - "./app/:/opt/app/app"
     depends_on:
       - dbSchedule
     networks:
       - schedule
+    restart: always
+    command: sh -c "node index.js"
+
   dbSchedule:
     image: "mysql:5.7"
     container_name: db_schedule
@@ -26,18 +31,6 @@ services:
       - "${DB_PORT}"
     volumes:
       - "./my-db:/var/lib/mysql"
-    networks:
-      - schedule
-  dbSchedulePma:
-    depends_on:
-      - dbSchedule
-    image: phpmyadmin/phpmyadmin
-    container_name: dbSchedulePma
-    restart: always
-    ports:
-      - "3033:80"
-    environment:
-      PMA_HOST: dbSchedule
     networks:
       - schedule
 
