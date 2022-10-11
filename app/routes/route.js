@@ -1,3 +1,8 @@
+const express = require("express");
+const bodyParser = require("body-parser");
+const app = express();
+app.use(bodyParser.json());
+
 const schedule = require("../controllers/Schedule");
 
 module.exports = function (app) {
@@ -15,6 +20,8 @@ module.exports = function (app) {
   });
 
   app.post("/addSchedule/", async (req, res) => {
+    // console.log(req.body);
+
     schedule.add(req, res);
   });
 };

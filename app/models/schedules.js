@@ -54,3 +54,14 @@ exports.getByDate = (req, calback) => {
     calback(err, rows, field);
   });
 };
+
+exports.insert = (data, calback) => {
+  conn.query(
+    "INSERT INTO schedule SET ?",
+    data,
+    function (error, results, fields) {
+      if (error) throw error;
+      calback(error, results, fields);
+    }
+  );
+};
