@@ -13,4 +13,8 @@ module.exports = function (app) {
     // console.log(req.params.id);
     schedule.getScheduleFilter(req, res);
   });
+
+  app.post("/addSchedule/", async (req, res) => {
+    schedule.add(req, res);
+  });
 };

@@ -14,7 +14,7 @@ services:
     networks:
       - kong-net
     restart: always
-    command: sh -c "node index.js"
+    command: sh -c "${RUNNER} index.js"
 
   dbSchedule:
     image: "mysql:5.7"

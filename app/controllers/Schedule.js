@@ -43,3 +43,7 @@ exports.getScheduleByDate = (req, res, next) => {
     responseData(res, 200, rows);
   });
 };
+
+exports.add = (req, res, next) => {
+  responseData(res, 200, req.body);
+};
