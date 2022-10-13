@@ -3,6 +3,8 @@
 ## Features
 
 - Get schedule
+- Get Schedule Filter
+- add schedule
 
 ## required
 
