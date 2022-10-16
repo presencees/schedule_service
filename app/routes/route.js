@@ -19,9 +19,12 @@ module.exports = function (app) {
     schedule.getScheduleFilter(req, res);
   });
 
-  app.post("/addSchedule/", async (req, res) => {
-    // console.log(req.body);
+  app.get("/participants/", async (req, res) => {
+    // console.log(req.params.id);
+    schedule.getParticipantsSchedule(req, res);
+  });
 
+  app.post("/addSchedule/", async (req, res) => {
     schedule.add(req, res);
   });
 };

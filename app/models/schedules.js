@@ -1,6 +1,10 @@
+require("dotenv").config();
 const database = require("../config/database");
 const { responseData, responseMessage } = require("../utils/response-handler");
+const axios = require('axios').default;
 const mysql = require("mysql");
+const getHealty = require("../helpers/services");
+
 const fields = [
   "schedule_id",
   "lecturer_name",
@@ -65,3 +69,7 @@ exports.insert = (data, calback) => {
     }
   );
 };
+
+exports.getParticipants = (req, calback) => {
+  getHealty(process.env.USER_SERVICES)
+}

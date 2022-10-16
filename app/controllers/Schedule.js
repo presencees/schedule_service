@@ -1,4 +1,4 @@
-const { getAll, getFilter, getByDate, insert } = require("../models/schedules");
+const { getAll, getFilter, getByDate, insert, getParticipants } = require("../models/schedules");
 const { responseData, responseMessage } = require("../utils/response-handler");
 const Ajv = require("ajv");
 const addFormats = require("ajv-formats");
@@ -100,3 +100,12 @@ exports.add = (req, res, next) => {
     responseMessage(res, 400, errorText);
   }
 };
+
+exports.getParticipantsSchedule = (req, res, next) => {
+  getParticipants(req, (err, rows, field) => {
+    if (err) {
+      responseMessage(res, 500, err);
+    }
+    responseData(res, 200, rows);
+  });
+}
