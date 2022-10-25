@@ -2,6 +2,7 @@ const { getAll, getFilter, getByDate, insert, getParticipants } = require("../mo
 const { responseData, responseMessage } = require("../utils/response-handler");
 const Ajv = require("ajv");
 const addFormats = require("ajv-formats");
+const axios = require('axios');
 const ajv = new Ajv();
 addFormats(ajv);
 
@@ -57,20 +58,20 @@ exports.getAllSchedule = (req, res, next) => {
     if (err) {
       responseMessage(res, 200, err);
     }
-    responseData(res, 200, rows);
+    let resCode = (rows.length > 0) ? 200 : 404;
+    responseData(res, resCode, rows);
   });
 };
 
-exports.getScheduleFilter = (req, res, next) => {
+exports.getScheduleFilter = async (req, res, next) => {
   // console.log("getAllSchedule");
   // console.log(req.params);
-  getFilter(req, (err, rows, field) => {
+  await getFilter(req, (err, rows, field) => {
     if (err) {
       responseMessage(res, 500, err);
     }
-    // console.log(err);
-    // const row = rows.filter((data) => data.schedule_id == req.params.id);
-    responseData(res, 200, rows);
+    let resCode = (rows.length > 0) ? 200 : 404;
+    responseData(res, resCode, rows);
   });
 };
 
@@ -79,7 +80,8 @@ exports.getScheduleByDate = (req, res, next) => {
     if (err) {
       responseMessage(res, 200, err);
     }
-    responseData(res, 200, rows);
+    let resCode = (rows.length > 0) ? 200 : 404;
+    responseData(res, resCode, rows);
   });
 };
 
@@ -106,6 +108,21 @@ exports.getParticipantsSchedule = (req, res, next) => {
     if (err) {
       responseMessage(res, 500, err);
     }
-    responseData(res, 200, rows);
+    let resCode = (rows.length > 0) ? 200 : 404;
+    responseData(res, resCode, rows);
   });
+};
+
+exports.getServices = (req, res, next) => {
+  axios.get('http://kong:8001/services')
+  .then(function (response) {
+    // handle success
+    // console.log(response);
+    responseData(res, 200, response.data);
+  })
+  .catch(function (error) {
+    // handle error
+    console.log(error);
+    responseData(res, 200, error);
+  })
 }

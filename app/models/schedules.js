@@ -3,7 +3,6 @@ const database = require("../config/database");
 const { responseData, responseMessage } = require("../utils/response-handler");
 const axios = require('axios').default;
 const mysql = require("mysql");
-const getHealty = require("../helpers/services");
 
 const fields = [
   "schedule_id",
@@ -37,13 +36,22 @@ exports.getFilter = (req, calback) => {
   const keys = Object.keys(query);
   for (let i of keys) {
     const r = query[i];
-    where = where + " AND " + i + " like '%" + r + "%'";
+    if (i=='schedule_id') {
+      where = where + " AND " + i + " = '" + r + "'";
+    } else {
+      where = where + " AND " + i + " like '%" + r + "%'";      
+    }
   }
-
-  let sql = "SELECT * FROM schedule where 1" + where;
-
+  let join = " LEFT JOIN participants ON schedule.schedule_id = participants.schedule_id";
+  let sql = "SELECT schedule.* FROM schedule "+join+" where 1" + where+" GROUP BY schedule.schedule_id";
+  console.log(sql);
   conn.query(sql, (err, rows, field) => {
-    calback(err, rows, field);
+    calback(err, rows.map((data) => {
+      return {
+        ...data,
+        // participants: Participants(data.schedule_id)
+      }
+     }), field);
   });
 };
 
@@ -71,5 +79,38 @@ exports.insert = (data, calback) => {
 };
 
 exports.getParticipants = (req, calback) => {
-  getHealty(process.env.USER_SERVICES)
+  let where = "";
+  let query = req.query;
+
+  const keys = Object.keys(query);
+  for (let i of keys) {
+    const r = query[i];
+    if (i=='schedule_id') {
+      where = where + " AND " + i + " = '" + r + "'";
+    } else {
+      where = where + " AND " + i + " like '%" + r + "%'";      
+    }
+  }
+
+  let sql = "SELECT * FROM participants where 1" + where;
+
+  conn.query(sql, (err, rows, field) => {
+    // setTimeout(() => {
+    //   console.log("okeee");
+    //   calback(err, rows, field);
+    // }, 4000);
+    
+    calback(err, rows, field);
+  });
+}
+
+function Participants (schedule_id) {
+  let where = " AND schedule_id = '" + schedule_id + "'";
+  let sql = "SELECT * FROM participants where 1" + where;
+  conn.query(sql, (err, rows, field) => {
+    // return rows;
+    console.log(rows);
+  });
+  
+  return [{sadasdas:"sdasda",asdasd:"sdasd"},{sadasdas:"sdasda",asdasd:"sdasd"}];
 }

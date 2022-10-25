@@ -3,8 +3,8 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: dbSchedule
--- Waktu pembuatan: 11 Okt 2022 pada 16.53
--- Versi server: 5.7.39
+-- Waktu pembuatan: 25 Okt 2022 pada 16.53
+-- Versi server: 5.7.40
 -- Versi PHP: 8.0.19
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
@@ -24,14 +24,23 @@ SET time_zone = "+00:00";
 -- --------------------------------------------------------
 
 --
--- Struktur dari tabel `participant`
+-- Struktur dari tabel `participants`
 --
 
-CREATE TABLE `participant` (
+CREATE TABLE `participants` (
   `participant_id` int(11) NOT NULL,
   `schedule_id` int(11) NOT NULL,
-  `mahasiswa_id` int(11) NOT NULL
+  `mahasiswa_id` int(11) NOT NULL,
+  `full_name` varchar(50) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Dumping data untuk tabel `participants`
+--
+
+INSERT INTO `participants` (`participant_id`, `schedule_id`, `mahasiswa_id`, `full_name`) VALUES
+(1, 11, 1, 'anto'),
+(2, 12, 2, 'doni');
 
 -- --------------------------------------------------------
 
@@ -67,16 +76,19 @@ INSERT INTO `schedule` (`schedule_id`, `lecturer_id`, `lecturer_name`, `subject_
 (9, 0, 'Lind Pauwel', 0, 'Hard Tile & Stone', '2021-12-10 00:00:00', '2022-02-12 00:00:00', 'GMC', 'Pathological fracture, left radius, subsequent encounter for fracture with delayed healing'),
 (10, 0, 'Marcille Goseling', 0, 'Fire Protection', '2022-03-22 00:00:00', '2022-08-28 00:00:00', 'Toyota', 'Burn with resulting rupture and destruction of unspecified eyeball, sequela'),
 (11, 1, 'fgsdfsdg', 32, 'rgyhsdhshsdh', '2022-12-23 10:12:12', '2022-12-23 12:12:12', 'A', 'Memahami konsep dasar kehidupan'),
-(12, 1, 'fgsdfsdg', 32, 'rgyhsdhshsdh', '2022-12-23 10:12:12', '2022-12-23 12:12:12', 'A', 'Memahami konsep dasar kehidupan');
+(12, 1, 'fgsdfsdg', 32, 'rgyhsdhshsdh', '2022-12-23 10:12:12', '2022-12-23 12:12:12', 'A', 'Memahami konsep dasar kehidupan'),
+(13, 1, 'fgsdfsdg', 32, 'rgyhsdhshsdh', '2022-12-24 10:12:12', '2022-12-23 12:12:12', 'A', 'Memahami konsep dasar kehidupan'),
+(14, 1, 'fgsdfsdg', 32, 'rgyhsdhshsdh', '2022-12-24 10:12:12', '2022-12-23 12:12:12', 'A', 'Memahami konsep dasar kehidupan'),
+(15, 1, 'fgsdfsdg', 32, 'rgyhsdhshsdh', '2022-12-25 10:12:12', '2022-12-23 12:12:12', 'A', 'Memahami konsep dasar kehidupan');
 
 --
 -- Indexes for dumped tables
 --
 
 --
--- Indeks untuk tabel `participant`
+-- Indeks untuk tabel `participants`
 --
-ALTER TABLE `participant`
+ALTER TABLE `participants`
   ADD PRIMARY KEY (`participant_id`),
   ADD KEY `schedule_id` (`schedule_id`);
 
@@ -91,26 +103,26 @@ ALTER TABLE `schedule`
 --
 
 --
--- AUTO_INCREMENT untuk tabel `participant`
+-- AUTO_INCREMENT untuk tabel `participants`
 --
-ALTER TABLE `participant`
-  MODIFY `participant_id` int(11) NOT NULL AUTO_INCREMENT;
+ALTER TABLE `participants`
+  MODIFY `participant_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT untuk tabel `schedule`
 --
 ALTER TABLE `schedule`
-  MODIFY `schedule_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
+  MODIFY `schedule_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
 
 --
 -- Ketidakleluasaan untuk tabel pelimpahan (Dumped Tables)
 --
 
 --
--- Ketidakleluasaan untuk tabel `participant`
+-- Ketidakleluasaan untuk tabel `participants`
 --
-ALTER TABLE `participant`
-  ADD CONSTRAINT `participant_ibfk_1` FOREIGN KEY (`schedule_id`) REFERENCES `schedule` (`schedule_id`);
+ALTER TABLE `participants`
+  ADD CONSTRAINT `participants_ibfk_1` FOREIGN KEY (`schedule_id`) REFERENCES `schedule` (`schedule_id`);
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
