@@ -32,6 +32,12 @@ services:
     networks:
       - kong-net
 
+  redis:
+    container_name: "redis_schedule"
+    image: "redis:latest"
+    networks:
+      - kong-net
+
 networks:
   kong-net:
     external: true

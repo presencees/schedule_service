@@ -27,4 +27,8 @@ module.exports = function (app) {
   app.post("/addSchedule/", async (req, res) => {
     schedule.add(req, res);
   });
+
+  app.get("/presences/qrToken", async (req, res) => {
+    schedule.qrToken(req, res);
+  });
 };

@@ -1,9 +1,14 @@
 const { getAll, getFilter, getByDate, insert, getParticipants } = require("../models/schedules");
+// const presences = require("../models/presences");
 const { responseData, responseMessage } = require("../utils/response-handler");
+const jwt = require("../helpers/tokenHelper");
 const Ajv = require("ajv");
 const addFormats = require("ajv-formats");
 const axios = require('axios');
 const ajv = new Ajv();
+const createClient = require('redis');
+
+
 addFormats(ajv);
 
 const scheduleSchema = {
@@ -126,3 +131,20 @@ exports.getServices = (req, res, next) => {
     responseData(res, 200, error);
   })
 }
+
+exports.qrToken = (req, res, next) => {
+  if (req.query.schedule_id) {
+    // const redis = createClient({
+    //   host: 'redis',
+    //   port: 6379
+    // });
+    const dataQr = {
+      schedule_id: req.query.schedule_id
+    };
+    const qrToken = jwt.createJwt(dataQr);
+    responseData(res, 200, qrToken);
+
+  }else{
+    responseMessage(res, 400, "schedule_id is required");
+  }
+};
