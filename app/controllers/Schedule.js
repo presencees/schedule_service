@@ -6,7 +6,7 @@ const Ajv = require("ajv");
 const addFormats = require("ajv-formats");
 const axios = require('axios');
 const ajv = new Ajv();
-const createClient = require('redis');
+const cache = require('../helpers/cacheHelper');
 
 
 addFormats(ajv);
@@ -132,18 +132,18 @@ exports.getServices = (req, res, next) => {
   })
 }
 
-exports.qrToken = (req, res, next) => {
+exports.qrToken = async (req, res, next) => {
   if (req.query.schedule_id) {
-    // const redis = createClient({
-    //   host: 'redis',
-    //   port: 6379
-    // });
     const dataQr = {
-      schedule_id: req.query.schedule_id
+      schedule_id: req.query.schedule_id,
+      create_at: Date.now()
     };
     const qrToken = jwt.createJwt(dataQr);
-    responseData(res, 200, qrToken);
 
+    cache.set({
+      schedule_id: qrToken,
+    })
+    responseData(res, 200, qrToken);
   }else{
     responseMessage(res, 400, "schedule_id is required");
   }
