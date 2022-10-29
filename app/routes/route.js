@@ -31,4 +31,9 @@ module.exports = function (app) {
   app.get("/presences/qrToken", async (req, res) => {
     schedule.qrToken(req, res);
   });
+
+  app.post("/presences/qrVerify", async (req, res) => {
+    schedule.qrVerify(req, res);
+  });
+
 };

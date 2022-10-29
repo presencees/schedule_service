@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: dbSchedule
--- Waktu pembuatan: 25 Okt 2022 pada 16.53
+-- Waktu pembuatan: 29 Okt 2022 pada 00.49
 -- Versi server: 5.7.40
 -- Versi PHP: 8.0.19
 
@@ -31,16 +31,17 @@ CREATE TABLE `participants` (
   `participant_id` int(11) NOT NULL,
   `schedule_id` int(11) NOT NULL,
   `mahasiswa_id` int(11) NOT NULL,
-  `full_name` varchar(50) NOT NULL
+  `full_name` varchar(50) NOT NULL,
+  `status` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
 -- Dumping data untuk tabel `participants`
 --
 
-INSERT INTO `participants` (`participant_id`, `schedule_id`, `mahasiswa_id`, `full_name`) VALUES
-(1, 11, 1, 'anto'),
-(2, 12, 2, 'doni');
+INSERT INTO `participants` (`participant_id`, `schedule_id`, `mahasiswa_id`, `full_name`, `status`) VALUES
+(1, 11, 1, 'anto', 1),
+(2, 12, 2, 'doni', 0);
 
 -- --------------------------------------------------------
 

@@ -11,3 +11,15 @@ conn.connect((err) => {
   console.log("Mysql Connected...");
 });
 
+exports.setPresence = (data, callback) => {
+  let sql =  "UPDATE participants SET status='1'  WHERE schedule_id = "+data.schedule_id+" AND mahasiswa_id = "+data.mahasiswa_id+""
+  conn.query(
+    sql,
+    (err, result, field) => {
+      if (err) {
+        return callback(err);
+      }
+      return callback(null, result, field);
+    }
+  );
+}
