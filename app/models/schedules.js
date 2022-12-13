@@ -1,6 +1,6 @@
 require("dotenv").config();
 const database = require("../config/database");
-const { responseData, responseMessage } = require("../utils/response-handler");
+const {responseData, responseMessage} = require("../utils/response-handler");
 const axios = require('axios').default;
 const mysql = require("mysql");
 
@@ -29,30 +29,32 @@ exports.getAll = (response, calback) => {
   });
 };
 
-exports.getFilter = (req, calback) => {
-  let where = "";
-  let query = req.query;
+exports.getFilter = async (req) => {
+  return new Promise(function (resolve, reject) {
+    let where = "";
+    let query = req.query;
 
-  const keys = Object.keys(query);
-  for (let i of keys) {
-    const r = query[i];
-    if (i=='schedule_id') {
-      where = where + " AND " + i + " = '" + r + "'";
-    } else {
-      where = where + " AND " + i + " like '%" + r + "%'";      
-    }
-  }
-  let join = " LEFT JOIN participants ON schedule.schedule_id = participants.schedule_id";
-  let sql = "SELECT schedule.* FROM schedule "+join+" where 1" + where+" GROUP BY schedule.schedule_id";
-  console.log(sql);
-  conn.query(sql, (err, rows, field) => {
-    calback(err, rows.map((data) => {
-      return {
-        ...data,
-        // participants: Participants(data.schedule_id)
+    const keys = Object.keys(query);
+    for (let i of keys) {
+      const r = query[i];
+      if (i == 'schedule_id') {
+        where = where + " AND " + i + " = '" + r + "'";
+      } else {
+        where = where + " AND " + i + " like '%" + r + "%'";
       }
-     }), field);
-  });
+    }
+    let join = " LEFT JOIN participants ON schedule.schedule_id = participants.schedule_id";
+    let sql = "SELECT schedule.* FROM schedule " + join + " where 1" + where + " GROUP BY schedule.schedule_id";
+    conn.query(sql, async (error, rows) => {
+      let data = []
+      for (let r in rows) {
+        resultParticipant = await Participants(rows[r].schedule_id)
+        data.push({...rows[r], participants: resultParticipant})
+      }
+      resolve(data)
+    })
+  })
+
 };
 
 exports.getByDate = (req, calback) => {
@@ -85,10 +87,10 @@ exports.getParticipants = (req, calback) => {
   const keys = Object.keys(query);
   for (let i of keys) {
     const r = query[i];
-    if (i=='schedule_id') {
+    if (i == 'schedule_id') {
       where = where + " AND " + i + " = '" + r + "'";
     } else {
-      where = where + " AND " + i + " like '%" + r + "%'";      
+      where = where + " AND " + i + " like '%" + r + "%'";
     }
   }
 
@@ -99,18 +101,21 @@ exports.getParticipants = (req, calback) => {
     //   console.log("okeee");
     //   calback(err, rows, field);
     // }, 4000);
-    
+
     calback(err, rows, field);
   });
 }
 
-function Participants (schedule_id) {
-  let where = " AND schedule_id = '" + schedule_id + "'";
-  let sql = "SELECT * FROM participants where 1" + where;
-  conn.query(sql, (err, rows, field) => {
-    // return rows;
-    console.log(rows);
+async function Participants(schedule_id) {
+  return new Promise(function (resolve, reject) {
+
+    let where = " AND schedule_id = '" + schedule_id + "'";
+    let sql = "SELECT * FROM participants where 1" + where;
+    conn.query(sql, (err, rows, field) => {
+      resolve(rows);
+    });
+
   });
-  
-  return [{sadasdas:"sdasda",asdasd:"sdasd"},{sadasdas:"sdasda",asdasd:"sdasd"}];
+
+  //return [{sadasdas: "sdasda", asdasd: "sdasd"}, {sadasdas: "sdasda", asdasd: "sdasd"}];
 }

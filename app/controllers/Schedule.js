@@ -1,6 +1,6 @@
-const { getAll, getFilter, getByDate, insert, getParticipants } = require("../models/schedules");
+const {getAll, getFilter, getByDate, insert, getParticipants} = require("../models/schedules");
 const presences = require("../models/presences");
-const { responseData, responseMessage } = require("../utils/response-handler");
+const {responseData, responseMessage} = require("../utils/response-handler");
 const jwt = require("../helpers/tokenHelper");
 const Ajv = require("ajv");
 const addFormats = require("ajv-formats");
@@ -72,13 +72,29 @@ exports.getAllSchedule = (req, res, next) => {
 exports.getScheduleFilter = async (req, res, next) => {
   // console.log("getAllSchedule");
   // console.log(req.params);
-  await getFilter(req, (err, rows, field) => {
-    if (err) {
-      responseMessage(res, 500, err);
-    }
-    let resCode = (rows.length > 0) ? 200 : 404;
-    responseData(res, resCode, rows);
-  });
+  result = await getFilter(req)
+  if (result.length != 0) {
+    res.setHeader("content-type", "application/json");
+    res.status(200)
+    res.send(
+      JSON.stringify({
+        status: 200,
+        error: null,
+        data: result,
+      })
+    )
+  } else {
+    res.setHeader("content-type", "application/json");
+    res.status(404)
+    res.send(
+      JSON.stringify({
+        status: 404,
+        error: null,
+        data: null,
+      })
+
+    )
+  }
 };
 
 exports.getScheduleByDate = (req, res, next) => {
@@ -101,7 +117,7 @@ exports.add = (req, res, next) => {
       if (err) {
         responseMessage(res, 200, err);
       }
-      responseData(res, 200, { insertId: result.insertId });
+      responseData(res, 200, {insertId: result.insertId});
     });
   } else {
     const errorText = ajv.errorsText(validate.errors);
@@ -121,16 +137,16 @@ exports.getParticipantsSchedule = (req, res, next) => {
 
 exports.getServices = (req, res, next) => {
   axios.get('http://kong:8001/services')
-  .then(function (response) {
-    // handle success
-    // console.log(response);
-    responseData(res, 200, response.data);
-  })
-  .catch(function (error) {
-    // handle error
-    console.log(error);
-    responseData(res, 200, error);
-  })
+    .then(function (response) {
+      // handle success
+      // console.log(response);
+      responseData(res, 200, response.data);
+    })
+    .catch(function (error) {
+      // handle error
+      console.log(error);
+      responseData(res, 200, error);
+    })
 }
 
 exports.qrToken = async (req, res, next) => {
@@ -141,12 +157,12 @@ exports.qrToken = async (req, res, next) => {
     };
     const qrToken = jwt.createJwt(dataQr);
 
-    cache.set('{"'+sesPrefix+req.query.schedule_id+'": "'+qrToken+'"}')
+    cache.set('{"' + sesPrefix + req.query.schedule_id + '": "' + qrToken + '"}')
     // console.log( cache.get(sesPrefix+req.query.schedule_id));
     const token = cache.get(sesPrefix + req.query.schedule_id)
     // console.log(token);
     responseData(res, 200, qrToken);
-  }else{
+  } else {
     responseMessage(res, 400, "schedule_id is required");
   }
 };
@@ -179,7 +195,7 @@ exports.qrVerify = async (req, res, next) => {
     } else {
       responseMessage(res, 400, rawToken.message);
     }
-  }else{
+  } else {
     responseMessage(res, 400, "token is required");
   }
 }

@@ -16,7 +16,7 @@ module.exports = function (app) {
 
   app.get("/getScheduleFilter/", async (req, res) => {
     // console.log(req.params.id);
-    schedule.getScheduleFilter(req, res);
+    await schedule.getScheduleFilter(req, res);
   });
 
   app.get("/participants/", async (req, res) => {
