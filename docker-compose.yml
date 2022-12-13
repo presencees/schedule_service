@@ -3,7 +3,8 @@ services:
   schedule:
     build:
       context: .
-    image: "fikridulumina/schedule-services:dev-1.0.0"
+      dockerfile: Dockerfile-compose
+    image: "schedule-services"
     container_name: app_schedule
     volumes:
       - "./.env/:/opt/app/.env"
@@ -32,11 +33,11 @@ services:
     networks:
       - kong-net
 
-  redis:
-    container_name: "redis_schedule"
-    image: "redis:latest"
-    networks:
-      - kong-net
+  #redis:
+  #  container_name: "redis_schedule"
+  #  image: "redis:latest"
+  #  networks:
+  #    - kong-net
 
 networks:
   kong-net:

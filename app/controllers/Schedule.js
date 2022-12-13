@@ -1,4 +1,4 @@
-const {getAll, getFilter, getByDate, insert, getParticipants} = require("../models/schedules");
+const {getAll, getFilter, getByDate, insert, update, deleteSchedule, getParticipants} = require("../models/schedules");
 const presences = require("../models/presences");
 const {responseData, responseMessage} = require("../utils/response-handler");
 const jwt = require("../helpers/tokenHelper");
@@ -21,11 +21,8 @@ const scheduleSchema = {
     lecturer_name: {
       type: "string",
     },
-    subject_id: {
+    course_id: {
       type: "number",
-    },
-    subject_name: {
-      type: "string",
     },
     start_time: {
       type: "object",
@@ -35,8 +32,11 @@ const scheduleSchema = {
       type: "object",
       format: "date-time",
     },
-    room: {
-      type: "string",
+    room_id: {
+      type: "number",
+    },
+    lecture_id: {
+      type: "number",
     },
     description: {
       type: "string",
@@ -45,12 +45,12 @@ const scheduleSchema = {
   required: [
     "lecturer_id",
     "lecturer_name",
-    "subject_id",
-    "subject_name",
+    "course_id",
     "start_time",
     "end_time",
+    "room_id",
   ],
-  additionalProperties: false,
+  additionalProperties: true,
 };
 
 exports.default = (req, res) => {
@@ -108,6 +108,7 @@ exports.getScheduleByDate = (req, res, next) => {
 };
 
 exports.add = (req, res, next) => {
+  console.log(req.body);
   const validate = ajv.compile(scheduleSchema);
   req.body.start_time = new Date(req.body.start_time);
   req.body.end_time = new Date(req.body.end_time);
@@ -122,6 +123,35 @@ exports.add = (req, res, next) => {
   } else {
     const errorText = ajv.errorsText(validate.errors);
     responseMessage(res, 400, errorText);
+  }
+};
+
+exports.update = (req, res, next) => {
+  const validate = ajv.compile(scheduleSchema);
+  req.body.start_time = new Date(req.body.start_time);
+  req.body.end_time = new Date(req.body.end_time);
+  const valid = validate(req.body);
+  if (valid) {
+    update(req.body, (err, result, field) => {
+      if (err) {
+        responseMessage(res, 200, err);
+      }
+      responseData(res, 200, {insertId: result.insertId});
+    });
+  } else {
+    console.log(req.body);
+    const errorText = ajv.errorsText(validate.errors);
+    responseMessage(res, 400, errorText);
+  }
+};
+
+exports.deleteSchedule = async (req, res, next) => {
+  result = await deleteSchedule(req.params.id)
+  console.log(result);
+  if (result) {
+    responseMessage(res, 204, 'delete succes!');
+  } else {
+    responseMessage(res, 404, 'not found!');
   }
 };
 

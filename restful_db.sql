@@ -45,13 +45,73 @@ CREATE TABLE `schedule` (
   `schedule_id` int(11) NOT NULL,
   `lecturer_id` int(20) NOT NULL,
   `lecturer_name` varchar(50) NOT NULL,
-  `subject_id` int(20) NOT NULL,
-  `subject_name` varchar(150) NOT NULL,
+  `course_id` int(11) NOT NULL,
   `start_time` datetime NOT NULL,
   `end_time` datetime NOT NULL,
-  `room` varchar(20) NOT NULL,
+  `room_id` int(11) NOT NULL,
+  `lecture_id` int(11) NOT NULL,
   `description` text NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Struktur dari tabel `course`
+--
+
+CREATE TABLE `course` (
+  `course_id` int(11) NOT NULL,
+  `course_name` varchar(150) NOT NULL,
+  `semester` int(2) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Dumping data untuk tabel `course`
+--
+
+INSERT INTO `course` (`course_id`, `course_name`, `semester`) VALUES
+(1, "Bahasa Inggris", 1),
+(2, "Jaringan Dasar", 2),
+(3, "Pemrograman Dasar", 3),
+(4, "Jaringan Lanjut", 4),
+(5, "Pemrograman Lanjut", 5);
+
+--
+-- Struktur dari tabel `room`
+--
+
+CREATE TABLE `room` (
+  `room_id` int(20) NOT NULL,
+  `room_name` varchar(150) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Dumping data untuk tabel `room`
+--
+
+INSERT INTO `room` (`room_id`, `room_name`) VALUES
+(1, "A"),
+(2, "B"),
+(3, "C"),
+(4, "D"),
+(5, "E"),
+(6, "F");
+
+--
+-- Struktur dari tabel `lecture`
+--
+
+CREATE TABLE `lecture` (
+  `lecture_id` int(20) NOT NULL,
+  `lecture_name` varchar(150) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Dumping data untuk tabel `lecture`
+--
+
+INSERT INTO `lecture` (`lecture_id`, `lecture_name`) VALUES
+(1, "TI_1"),
+(2, "TI_2"),
+(3, "TI_3");
 
 --
 -- Indeks untuk tabel `participants`
@@ -59,6 +119,24 @@ CREATE TABLE `schedule` (
 ALTER TABLE `participants`
   ADD PRIMARY KEY (`participant_id`),
   ADD KEY `schedule_id` (`schedule_id`);
+
+--
+-- Indeks untuk tabel `course`
+--
+ALTER TABLE `course`
+  ADD PRIMARY KEY (`course_id`);
+
+--
+-- Indeks untuk tabel `room`
+--
+ALTER TABLE `room`
+  ADD PRIMARY KEY (`room_id`);
+
+--
+-- Indeks untuk tabel `lecture`
+--
+ALTER TABLE `lecture`
+  ADD PRIMARY KEY (`lecture_id`);
 
 --
 -- Indeks untuk tabel `schedule`
@@ -70,17 +148,41 @@ ALTER TABLE `schedule`
 -- AUTO_INCREMENT untuk tabel `participants`
 --
 ALTER TABLE `participants`
-  MODIFY `participant_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `participant_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1;
 
 --
 -- AUTO_INCREMENT untuk tabel `schedule`
 --
 ALTER TABLE `schedule`
-  MODIFY `schedule_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
+  MODIFY `schedule_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1;
+
+--
+-- AUTO_INCREMENT untuk tabel `course`
+--
+ALTER TABLE `course`
+  MODIFY `course_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+
+--
+-- AUTO_INCREMENT untuk tabel `room`
+--
+ALTER TABLE `room`
+  MODIFY `room_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+
+--
+-- AUTO_INCREMENT untuk tabel `lecture`
+--
+ALTER TABLE `lecture`
+  MODIFY `lecture_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- Ketidakleluasaan untuk tabel `participants`
 --
 ALTER TABLE `participants`
   ADD CONSTRAINT `participants_ibfk_1` FOREIGN KEY (`schedule_id`) REFERENCES `schedule` (`schedule_id`);
+ALTER TABLE schedule
+  ADD FOREIGN KEY (course_id) REFERENCES course(course_id);
+ALTER TABLE `schedule`
+  ADD FOREIGN KEY (`room_id`) REFERENCES `room` (`room_id`);
+ALTER TABLE `schedule`
+  ADD FOREIGN KEY (`lecture_id`) REFERENCES `lecture` (`lecture_id`);
 COMMIT;

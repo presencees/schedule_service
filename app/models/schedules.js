@@ -43,8 +43,10 @@ exports.getFilter = async (req) => {
         where = where + " AND " + i + " like '%" + r + "%'";
       }
     }
-    let join = " LEFT JOIN participants ON schedule.schedule_id = participants.schedule_id";
-    let sql = "SELECT schedule.* FROM schedule " + join + " where 1" + where + " GROUP BY schedule.schedule_id";
+    let join = "INNER JOIN course ON schedule.course_id=course.course_id";
+    join += " INNER JOIN room ON schedule.room_id=room.room_id";
+    join += " INNER JOIN lecture ON schedule.lecture_id=lecture.lecture_id";
+    let sql = "SELECT schedule.*, course.course_name, room.room_name, lecture.lecture_name FROM schedule " + join + " where 1" + where + " GROUP BY schedule.schedule_id";
     conn.query(sql, async (error, rows) => {
       let data = []
       for (let r in rows) {
@@ -80,6 +82,35 @@ exports.insert = (data, calback) => {
   );
 };
 
+exports.update = (data, calback) => {
+  scheduleId = data.schedule_id
+  delete data.schedule_id
+  conn.query(
+    "UPDATE schedule SET ? WHERE schedule_id = " + scheduleId + "",
+    data,
+    function (error, results, fields) {
+      if (error) throw error;
+      calback(error, results, fields);
+    }
+  );
+};
+
+exports.deleteSchedule = (scheduleId) => {
+  return new Promise(function (resolve, reject) {
+    conn.query(
+      "DELETE FROM schedule WHERE schedule_id = " + scheduleId + "",
+      function (error, result) {
+        if (error) throw error;
+        if (result.affectedRows != 0) {
+          resolve(true)
+        } else {
+          resolve(false)
+        }
+      }
+    );
+  })
+};
+
 exports.getParticipants = (req, calback) => {
   let where = "";
   let query = req.query;
@@ -97,10 +128,6 @@ exports.getParticipants = (req, calback) => {
   let sql = "SELECT * FROM participants where 1" + where;
 
   conn.query(sql, (err, rows, field) => {
-    // setTimeout(() => {
-    //   console.log("okeee");
-    //   calback(err, rows, field);
-    // }, 4000);
 
     calback(err, rows, field);
   });
@@ -116,6 +143,4 @@ async function Participants(schedule_id) {
     });
 
   });
-
-  //return [{sadasdas: "sdasda", asdasd: "sdasd"}, {sadasdas: "sdasda", asdasd: "sdasd"}];
 }
