@@ -50,6 +50,8 @@ CREATE TABLE `schedule` (
   `end_time` datetime NOT NULL,
   `room_id` int(11) NOT NULL,
   `lecture_id` int(11) NOT NULL,
+  `lecture_meet` int(2) NOT NULL,
+  `presence_duration` int(3) NOT NULL,
   `description` text NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
@@ -60,6 +62,7 @@ CREATE TABLE `schedule` (
 CREATE TABLE `course` (
   `course_id` int(11) NOT NULL,
   `course_name` varchar(150) NOT NULL,
+  `course_credits` int(2) NOT NULL,
   `semester` int(2) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
@@ -67,12 +70,12 @@ CREATE TABLE `course` (
 -- Dumping data untuk tabel `course`
 --
 
-INSERT INTO `course` (`course_id`, `course_name`, `semester`) VALUES
-(1, "Bahasa Inggris", 1),
-(2, "Jaringan Dasar", 2),
-(3, "Pemrograman Dasar", 3),
-(4, "Jaringan Lanjut", 4),
-(5, "Pemrograman Lanjut", 5);
+INSERT INTO `course` (`course_id`, `course_name`, `course_credits`, `semester`) VALUES
+(1, "Bahasa Inggris", 3, 1),
+(2, "Jaringan Dasar", 3, 2),
+(3, "Pemrograman Dasar", 3, 3),
+(4, "Jaringan Lanjut", 4, 4),
+(5, "Pemrograman Lanjut", 4, 5);
 
 --
 -- Struktur dari tabel `room`

@@ -1,4 +1,4 @@
-const {getAll, getFilter, getByDate, insert, update, deleteSchedule, getParticipants} = require("../models/schedules");
+const {getAll, getFilter, getByDate, insert, update, deleteSchedule, getLectureMeet, getParticipants} = require("../models/schedules");
 const presences = require("../models/presences");
 const {responseData, responseMessage} = require("../utils/response-handler");
 const jwt = require("../helpers/tokenHelper");
@@ -38,6 +38,12 @@ const scheduleSchema = {
     lecture_id: {
       type: "number",
     },
+    lecturer_meet: {
+      type: "number",
+    },
+    presence_duration: {
+      type: "number",
+    },
     description: {
       type: "string",
     },
@@ -49,6 +55,8 @@ const scheduleSchema = {
     "start_time",
     "end_time",
     "room_id",
+    "lecture_meet",
+    "presence_duration",
   ],
   additionalProperties: true,
 };
@@ -70,30 +78,11 @@ exports.getAllSchedule = (req, res, next) => {
 };
 
 exports.getScheduleFilter = async (req, res, next) => {
-  // console.log("getAllSchedule");
-  // console.log(req.params);
   result = await getFilter(req)
   if (result.length != 0) {
-    res.setHeader("content-type", "application/json");
-    res.status(200)
-    res.send(
-      JSON.stringify({
-        status: 200,
-        error: null,
-        data: result,
-      })
-    )
+    responseData(res, 200, result);
   } else {
-    res.setHeader("content-type", "application/json");
-    res.status(404)
-    res.send(
-      JSON.stringify({
-        status: 404,
-        error: null,
-        data: null,
-      })
-
-    )
+    responseMessage(res, 404, 'not found!');
   }
 };
 
@@ -108,7 +97,6 @@ exports.getScheduleByDate = (req, res, next) => {
 };
 
 exports.add = (req, res, next) => {
-  console.log(req.body);
   const validate = ajv.compile(scheduleSchema);
   req.body.start_time = new Date(req.body.start_time);
   req.body.end_time = new Date(req.body.end_time);
@@ -116,7 +104,7 @@ exports.add = (req, res, next) => {
   if (valid) {
     insert(req.body, (err, result, field) => {
       if (err) {
-        responseMessage(res, 200, err);
+        responseMessage(res, 500, err);
       }
       responseData(res, 200, {insertId: result.insertId});
     });
@@ -139,7 +127,6 @@ exports.update = (req, res, next) => {
       responseData(res, 200, {insertId: result.insertId});
     });
   } else {
-    console.log(req.body);
     const errorText = ajv.errorsText(validate.errors);
     responseMessage(res, 400, errorText);
   }
@@ -147,9 +134,17 @@ exports.update = (req, res, next) => {
 
 exports.deleteSchedule = async (req, res, next) => {
   result = await deleteSchedule(req.params.id)
-  console.log(result);
   if (result) {
     responseMessage(res, 204, 'delete succes!');
+  } else {
+    responseMessage(res, 404, 'not found!');
+  }
+};
+
+exports.getLectureMeet = async (req, res, next) => {
+  result = await getLectureMeet(req)
+  if (result) {
+    responseData(res, 200, result);
   } else {
     responseMessage(res, 404, 'not found!');
   }

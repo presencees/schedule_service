@@ -46,6 +46,7 @@ exports.getFilter = async (req) => {
     let join = "INNER JOIN course ON schedule.course_id=course.course_id";
     join += " INNER JOIN room ON schedule.room_id=room.room_id";
     join += " INNER JOIN lecture ON schedule.lecture_id=lecture.lecture_id";
+    join += " LEFT JOIN participants ON schedule.schedule_id = participants.schedule_id";
     let sql = "SELECT schedule.*, course.course_name, room.room_name, lecture.lecture_name FROM schedule " + join + " where 1" + where + " GROUP BY schedule.schedule_id";
     conn.query(sql, async (error, rows) => {
       let data = []
@@ -140,6 +141,35 @@ async function Participants(schedule_id) {
     let sql = "SELECT * FROM participants where 1" + where;
     conn.query(sql, (err, rows, field) => {
       resolve(rows);
+    });
+
+  });
+}
+
+exports.getLectureMeet = (req) => {
+  return new Promise(function (resolve, reject) {
+    let courseId = req.params.id
+    let maxMeet = 16
+
+    let where = " AND course_id = '" + courseId + "'";
+    let sql = "SELECT * FROM schedule where 1" + where;
+    conn.query(sql, (err, rows) => {
+      let data = []
+      let dataLectureMeet = []
+      let dataMaxMeet = arr = Array.from({length: maxMeet}, (_, index) => index + 1)
+      //let datab = new Array(16);
+      if (rows.length > 0) {
+        for (let r in rows) {
+          dataLectureMeet.push(rows[r].lecture_meet)
+        }
+
+        data = [...new Set([...dataLectureMeet, ...dataMaxMeet])]
+        data = data.filter(item => !dataLectureMeet.includes(item))
+
+      } else {
+        data = arr = Array.from({length: maxMeet}, (_, index) => index + 1)
+      }
+      resolve(data);
     });
 
   });
