@@ -206,3 +206,17 @@ exports.addParticipants = async (schedule_id, lecture_id, generation) => {
     })
 
 };
+
+exports.deleteParticipants = (schedule_id) => {
+  return new Promise(function (resolve, reject) {
+    conn.query(
+      "DELETE FROM participants where schedule_id = " + schedule_id, (err, row) => {
+        if (err) throw error;
+        if (row.affectedRows != 0) {
+          resolve(true)
+        } else {
+          resolve(false)
+        }
+      })
+  })
+}

@@ -1,4 +1,4 @@
-const {getAll, getFilter, getByDate, insert, update, deleteSchedule, getLectureMeet, getParticipants, addParticipants} = require("../models/schedules");
+const {getAll, getFilter, getByDate, insert, update, deleteSchedule, getLectureMeet, getParticipants, addParticipants, deleteParticipants} = require("../models/schedules");
 const presences = require("../models/presences");
 const {responseData, responseMessage} = require("../utils/response-handler");
 const jwt = require("../helpers/tokenHelper");
@@ -134,11 +134,14 @@ exports.update = (req, res, next) => {
 };
 
 exports.deleteSchedule = async (req, res, next) => {
-  result = await deleteSchedule(req.params.id)
-  if (result) {
-    responseMessage(res, 204, 'delete succes!');
-  } else {
-    responseMessage(res, 404, 'not found!');
+  deleteResult = await deleteParticipants(req.params.id);
+  if (deleteResult) {
+    result = await deleteSchedule(req.params.id)
+    if (result) {
+      responseMessage(res, 204, 'delete succes!');
+    } else {
+      responseMessage(res, 404, 'not found!');
+    }
   }
 };
 
