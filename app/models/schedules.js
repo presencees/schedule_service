@@ -201,7 +201,7 @@ exports.addParticipants = async (schedule_id, lecture_id, generation) => {
       let result = await axios.get(process.env.USER_SERVICE_BASE_URL + `/mahasiswa`, {params});
       for (let r in result.data.response) {
         conn.query(
-          "INSERT INTO participants SET ?", {schedule_id: schedule_id, mahasiswa_id: result.data.response[r].mahasiswa_id, full_name: result.data.response[r].full_name, status: result.data.response[r].status})
+          "INSERT INTO participants SET ?", {schedule_id: schedule_id, mahasiswa_id: result.data.response[r].mahasiswa_id, full_name: result.data.response[r].full_name, status: 0})
       }
     })
 

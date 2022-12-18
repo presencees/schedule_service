@@ -14,7 +14,6 @@ conn.connect((err) => {
 
 exports.getCourse = () => {
   return new Promise(function (resolve, reject) {
-    console.log(date.getMonth());
     if (date.getMonth() > 6) {
       sql = "SELECT * FROM course WHERE mod(semester,2) = 0;"
     } else {
