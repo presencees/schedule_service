@@ -1,8 +1,9 @@
-require("dotenv").config();
+require('dotenv').config();
 const database = require("../config/database");
 const {responseData, responseMessage} = require("../utils/response-handler");
-const axios = require('axios').default;
+const axios = require('axios');
 const mysql = require("mysql");
+const date = new Date();
 
 const fields = [
   "schedule_id",
@@ -174,3 +175,34 @@ exports.getLectureMeet = (req) => {
 
   });
 }
+
+exports.addParticipants = async (schedule_id, lecture_id, generation) => {
+  conn.query(
+    "SELECT semester FROM course where course_id = " + generation, async (err, row) => {
+      if (err) throw error;
+      semester = row[0].semester
+      if (semester <= 2) {
+        generation = date.getFullYear()
+      } else {
+        generation = ((semester * 5.5) / 12) - date.getFullYear()
+        generationSplit = String(Math.abs(generation)).split(".")
+        if (generationSplit.length > 1) {
+          if (parseInt(generationSplit[1]) >= 0 && parseInt(generationSplit[1]) < 2) {
+            generation = generationSplit[0]
+          } else if (parseInt(generationSplit[1]) > 2) {
+            generation = parseInt(generationSplit[0]) + 1
+          }
+        } else {
+          generation = generationSplit[0]
+        }
+      }
+      Math.abs(generation)
+      let params = {generation: generation, lecture_id: lecture_id}
+      let result = await axios.get(process.env.USER_SERVICE_BASE_URL + `/mahasiswa`, {params});
+      for (let r in result.data.response) {
+        conn.query(
+          "INSERT INTO participants SET ?", {schedule_id: schedule_id, mahasiswa_id: result.data.response[r].mahasiswa_id, full_name: result.data.response[r].full_name, status: result.data.response[r].status})
+      }
+    })
+
+};

@@ -1,4 +1,4 @@
-const {getAll, getFilter, getByDate, insert, update, deleteSchedule, getLectureMeet, getParticipants} = require("../models/schedules");
+const {getAll, getFilter, getByDate, insert, update, deleteSchedule, getLectureMeet, getParticipants, addParticipants} = require("../models/schedules");
 const presences = require("../models/presences");
 const {responseData, responseMessage} = require("../utils/response-handler");
 const jwt = require("../helpers/tokenHelper");
@@ -107,6 +107,7 @@ exports.add = (req, res, next) => {
         responseMessage(res, 500, err);
       }
       responseData(res, 200, {insertId: result.insertId});
+      addParticipants(result.insertId, req.body.lecture_id, req.body.course_id);
     });
   } else {
     const errorText = ajv.errorsText(validate.errors);
