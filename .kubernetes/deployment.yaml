@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
       - name: schedule-service
-        image: registry.gitlab.com/presencees/backend/schedule-service:latest
+        image: registry.gitlab.com/presencees/backend/schedule-service:<tag>
         ports:
         - containerPort: 3000
         volumeMounts:

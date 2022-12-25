@@ -19,6 +19,8 @@ data:
     # JWT
     JWT_SECRET_KEY='gfg_jwt_secret_key'
     TOKEN_HEADER_KEY='gfg_token_header_key'
+
+    USER_SERVICE_BASE_URL=http://user-service:3000
 kind: ConfigMap
 metadata:
   creationTimestamp: null
