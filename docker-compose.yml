@@ -6,6 +6,8 @@ services:
       dockerfile: Dockerfile-compose
     image: "schedule-services"
     container_name: app_schedule
+    ports:
+      - "3000:3000"
     volumes:
       - "./.env/:/opt/app/.env"
       - "./index.js/:/opt/app/index.js"
@@ -21,6 +23,8 @@ services:
     image: "mysql:5.7"
     container_name: db_schedule
     restart: always
+    ports:
+      - "3032:3306"
     environment:
       MYSQL_DATABASE: "${DB_NAME}"
       MYSQL_USER: "${DB_USER}"

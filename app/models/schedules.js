@@ -150,28 +150,36 @@ async function Participants(schedule_id) {
 exports.getLectureMeet = (req) => {
   return new Promise(function (resolve, reject) {
     let courseId = req.params.id
-    let maxMeet = 16
+    conn.query(
+      "SELECT config_value FROM config where config_name = 'lecture_meet_max';", (err, row) => {
 
-    let where = " AND course_id = '" + courseId + "'";
-    let sql = "SELECT * FROM schedule where 1" + where;
-    conn.query(sql, (err, rows) => {
-      let data = []
-      let dataLectureMeet = []
-      let dataMaxMeet = arr = Array.from({length: maxMeet}, (_, index) => index + 1)
-      //let datab = new Array(16);
-      if (rows.length > 0) {
-        for (let r in rows) {
-          dataLectureMeet.push(rows[r].lecture_meet)
+        if (err) {
+          reject(err);
         }
+        let maxMeet = parseInt(row[0].config_value)
 
-        data = [...new Set([...dataLectureMeet, ...dataMaxMeet])]
-        data = data.filter(item => !dataLectureMeet.includes(item))
+        let where = " AND course_id = '" + courseId + "'";
+        let sql = "SELECT * FROM schedule where 1" + where;
+        conn.query(sql, (err, rows) => {
+          let data = []
+          let dataLectureMeet = []
+          let dataMaxMeet = arr = Array.from({length: maxMeet}, (_, index) => index + 1)
+          //let datab = new Array(16);
+          if (rows.length > 0) {
+            for (let r in rows) {
+              dataLectureMeet.push(rows[r].lecture_meet)
+            }
 
-      } else {
-        data = arr = Array.from({length: maxMeet}, (_, index) => index + 1)
-      }
-      resolve(data);
-    });
+            data = [...new Set([...dataLectureMeet, ...dataMaxMeet])]
+            data = data.filter(item => !dataLectureMeet.includes(item))
+
+          } else {
+            data = arr = Array.from({length: maxMeet}, (_, index) => index + 1)
+          }
+          resolve(data);
+        });
+      });
+
 
   });
 }

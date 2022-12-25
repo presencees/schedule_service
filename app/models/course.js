@@ -20,13 +20,47 @@ exports.getCourse = () => {
       sql = "SELECT * FROM course WHERE mod(semester,2) <> 0;"
     }
     conn.query(
-      sql,
-      (err, result, field) => {
+      "SELECT config_value FROM config where config_name = 'semester_auto_detect';", (err, row) => {
+
         if (err) {
           reject(err);
         }
-        resolve(result)
-      }
-    );
+
+        if (row[0].config_value != "true") {
+          conn.query(
+            "SELECT config_value FROM config where config_name = 'semester';", (err, row) => {
+              if (err) {
+                reject(err);
+              }
+              if (row[0].config_value == "genap") {
+                sql = "SELECT * FROM course WHERE mod(semester,2) = 0;"
+              } else {
+                sql = "SELECT * FROM course WHERE mod(semester,2) <> 0;"
+              }
+              conn.query(
+                sql,
+                (err, result, field) => {
+                  if (err) {
+                    reject(err);
+                  }
+                  resolve(result)
+                }
+              );
+
+            })
+        } else {
+          conn.query(
+            sql,
+            (err, result, field) => {
+              if (err) {
+                reject(err);
+              }
+              resolve(result)
+            }
+          );
+
+        }
+
+      })
   })
 }

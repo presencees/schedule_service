@@ -117,6 +117,26 @@ INSERT INTO `lecture` (`lecture_id`, `lecture_name`) VALUES
 (3, "TI_3");
 
 --
+-- Struktur dari tabel `config`
+--
+
+CREATE TABLE `config` (
+  `config_id` int(20) NOT NULL,
+  `config_name` varchar(150) NOT NULL,
+  `config_value` varchar(150) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Dumping data untuk tabel `config`
+--
+
+INSERT INTO `config` (`config_id`, `config_name`, `config_value`) VALUES
+(1, "semester", "ganjil"),
+(2, "lecture_meet_max", "16"),
+(3, "schedule_add_auto_fullscreen", "false"),
+(4, "semester_auto_detect", "true");
+
+--
 -- Indeks untuk tabel `participants`
 --
 ALTER TABLE `participants`
@@ -148,6 +168,12 @@ ALTER TABLE `schedule`
   ADD PRIMARY KEY (`schedule_id`);
 
 --
+-- Indeks untuk tabel `config`
+--
+ALTER TABLE `config`
+  ADD PRIMARY KEY (`config_id`);
+
+--
 -- AUTO_INCREMENT untuk tabel `participants`
 --
 ALTER TABLE `participants`
@@ -176,6 +202,12 @@ ALTER TABLE `room`
 --
 ALTER TABLE `lecture`
   MODIFY `lecture_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+
+--
+-- AUTO_INCREMENT untuk tabel `config`
+--
+ALTER TABLE `config`
+  MODIFY `config_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- Ketidakleluasaan untuk tabel `participants`
