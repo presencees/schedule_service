@@ -1,0 +1,39 @@
+stages:
+  - build
+  - deploy
+
+build:
+  stage: build
+  image:
+    name: gcr.io/kaniko-project/executor:debug
+    entrypoint: [""]
+  script:
+    - mkdir -p /kaniko/.docker
+    - echo "{\"auths\":{\"$CI_REGISTRY\":{\"username\":\"$CI_REGISTRY_USER\",\"password\":\"$CI_REGISTRY_PASSWORD\"}}}" > /kaniko/.docker/config.json
+    - /kaniko/executor --context $CI_PROJECT_DIR --dockerfile $CI_PROJECT_DIR/Dockerfile --destination $CI_REGISTRY_IMAGE:build-$CI_JOB_ID
+    - BUILD_VERSION="$CI_JOB_ID"                            # In script, you get a variable needs to be passed to the other jobs.
+    - echo "BUILD_VERSION=$BUILD_VERSION" >> build.env    # Write the variable in dotenv file.
+  only:
+    - development
+  tags:
+    - presencees-runner
+  artifacts:
+    reports:
+      dotenv: build.env                                   # Report back dotenv file to rails.
+
+deploy:
+  stage: deploy
+  image:
+    name: bitnami/kubectl:latest
+    entrypoint: ['']
+  script:
+    - echo "Build version is ${BUILD_VERSION}"            # Consume the variable 
+    - kubectl config use-context $(kubectl config get-contexts |  awk 'NR==2 {print $1}');
+    - sed -i "s/<tag>/build\-${BUILD_VERSION}/" .kubernetes/deployment.yaml
+    - kubectl -n presencees apply -f .kubernetes/deployment.yaml
+  tags:
+    - presencees-runner
+  dependencies:
+    - build
+  only:
+    - development
